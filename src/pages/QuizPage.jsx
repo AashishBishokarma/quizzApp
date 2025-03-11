@@ -1,16 +1,39 @@
-import React, { useState, useRef ,useEffect} from "react";
-import { useNavigate } from "react-router-dom";
-import { data } from "../assets/data";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { topics } from "../assets/topics"; 
+import { htmlQuestions,cssQuestions,jsQuestions,reactQuestions, nodejsQuestions, mongodbQuestions, sqlQuestions } from "../assets/questions"; // Import all topic questions
 
 const QuizPage = () => {
+  const location = useLocation();
+  const selectedTopic = location.state?.topicId;
+  const navigate = useNavigate();
+
+  if (!selectedTopic) {
+    navigate("/"); // Redirect to home if no topic is selected
+    return null;
+  }
+
+  const topicQuestions = {
+    html : htmlQuestions ,
+    css : cssQuestions,
+    javascript : jsQuestions ,
+    react: reactQuestions,
+    nodejs: nodejsQuestions,
+    mongodb: mongodbQuestions,
+    sql: sqlQuestions,
+  };
+
+  const data = topicQuestions[selectedTopic];
+
   let [index, setIndex] = useState(0);
   let [question, setQuestion] = useState(data[index]);
-  let [lock, setLock] = useState(false);
   let [score, setScore] = useState(0);
-  let [selectedAnswers, setSelectedAnswers] = useState(Array(data.length).fill(null)); // Stores selected answers
+  let [lock, setLock] = useState(false);
+  let [selectedAnswers, setSelectedAnswers] = useState(Array(data.length).fill(null));
+
   useEffect(() => {
-    console.log("Score updated:", score);
-  }, [score]);
+    setQuestion(data[index]);
+  }, [index, data]);
 
   let Option1 = useRef(null);
   let Option2 = useRef(null);
@@ -19,13 +42,10 @@ const QuizPage = () => {
   
   let option_array = [Option1, Option2, Option3, Option4];
 
-  const navigate = useNavigate();
-
   const checkAns = (e, ans) => {
     if (!lock) {
       let updatedAnswers = [...selectedAnswers]; 
-      updatedAnswers[index] = ans; // Store the selected answer5
-      
+      updatedAnswers[index] = ans;
       setSelectedAnswers(updatedAnswers);
 
       if (question.ans === ans) {
@@ -42,19 +62,12 @@ const QuizPage = () => {
   const nextQuestion = () => {
     if (index < data.length - 1) {
       setIndex(index + 1);
-      setQuestion(data[index + 1]);
-      setLock(selectedAnswers[index + 1] !== null); // Lock only if an answer was selected
+      setLock(selectedAnswers[index + 1] !== null);
 
-      if(index = data.length - 1){
-        
-      }
-
-      // Remove styles only if no previous answer exists
       option_array.forEach((option) => {
         option.current.classList.remove("correct", "wrong");
       });
 
-      // Restore previously selected answer (if any)
       if (selectedAnswers[index + 1] !== null) {
         let prevSelected = selectedAnswers[index + 1];
         option_array[prevSelected - 1].current.classList.add(
@@ -67,36 +80,13 @@ const QuizPage = () => {
     }
   };
 
-  const prevQuestion = () => {
-    if (index > 0) {
-      setIndex(index - 1);
-      setQuestion(data[index - 1]);
-      setLock(selectedAnswers[index - 1] !== null); // Lock only if an answer was selected
-
-      // Restore previously selected answer (if any)
-      option_array.forEach((option) => {
-        option.current.classList.remove("correct", "wrong");
-      });
-
-      if (selectedAnswers[index - 1] !== null) {
-        let prevSelected = selectedAnswers[index - 1];
-        option_array[prevSelected - 1].current.classList.add(
-          prevSelected === data[index - 1].ans ? "correct" : "wrong"
-        );
-        if (prevSelected !== data[index - 1].ans) {
-          option_array[data[index - 1].ans - 1].current.classList.add("correct");
-        }
-      }
-    }
-  };
-
   const finishQuiz = () => {
-    navigate("/result", { state: { score, totalQuestions: data.length } }); // Redirects with score data
+    navigate("/result", { state: { score, totalQuestions: data.length } });
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-3xl font-bold">Quiz Page</h1>
+      <h1 className="text-3xl font-bold">Quiz - {selectedTopic.toUpperCase()}</h1>
       <div className="bg-white p-8 rounded-lg shadow-lg mt-4 w-150">
         <h2 className="my-4 text-xl">
           <span>Q{index + 1}</span>. {question.question}
@@ -116,27 +106,11 @@ const QuizPage = () => {
           </li>
         </ul>
         <div className="mt-4 flex justify-between">
-          <button
-            className={`px-5 py-2 border ${index === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
-            onClick={prevQuestion}
-          >
-            Previous
-          </button>
-          <button
-            className={`px-5 py-2 border ${index === data.length - 1 ? "bg-purple-500 text-white" : ""}`}
-            onClick={index === data.length - 1 ? finishQuiz : nextQuestion}
-          >
+          <button className={`px-5 py-2 border ${index === 0 ? "opacity-50 cursor-not-allowed" : ""}`} onClick={() => setIndex(index - 1)}>Previous</button>
+          <button className="px-5 py-2 border" onClick={index === data.length - 1 ? finishQuiz : nextQuestion}>
             {index === data.length - 1 ? "Finish" : "Next"}
           </button>
         </div>
-
-        <hr className="mt-10 mb-5"></hr>
-
-        <div className="index">
-          {index + 1} out of {data.length}
-        </div>
-
-        
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ const Home = () => {
       <p className="text-lg md:text-xl text-gray-700 text-center mb-4">
         Test your knowledge with fun quizzes!
       </p>
-      <Link to="/quiz">
+      <Link to="/topics">
         <button className="px-6 py-3 bg-blue-500 text-white text-lg rounded-lg hover:bg-blue-600 transition">
           Start Quiz
         </button>
