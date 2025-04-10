@@ -4,21 +4,27 @@ import Topics from './pages/Topics';
 import QuizPage from './pages/QuizPage';
 import ResultPage from './pages/ResultPage';
 import Leaderboard from './pages/Leaderborad';
+import Layout from './components/Layout';
 import './App.css'
 
 function App() {
 
   return (
     
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="topics" element={<Topics/>}/>
-        <Route path="/quiz" element={<QuizPage/>}/>
-        <Route path="/result" element={<ResultPage/>}/>
-        <Route path="/leaderboard" element={<Leaderboard/>}/>
-      </Routes>
-    </Router>
+
+  <Router>
+    <Routes>
+      <Route path="/" element={<Layout><Home /></Layout>} />
+      <Route path="/topics" element={<Layout><Topics /></Layout>} />
+      <Route path="/quiz" element={<Layout><QuizPage /></Layout>} />
+      <Route path="/result" element={<Layout><ResultPage /></Layout>} />
+      <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
+    </Routes>
+  </Router>
+
+
+
+    
   )
 }
 

@@ -12,8 +12,8 @@ const Topics = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-500">
-      <h1 className="text-3xl md:text-5xl font-bold text-center mb-6">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h1 className="text-3xl md:text-5xl font-bold text-center mb-6 text-white">
         Choose a Quiz Topic
       </h1>
 
